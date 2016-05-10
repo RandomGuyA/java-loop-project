@@ -1,0 +1,75 @@
+<?xcoordml version="1.0" encoding="UTF-8"?>
+<shape countx="3" county="3" name="Inverted Z Shape">
+    <states>
+        <state>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+        </state>
+        <state>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+        </state>
+        <state>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+        </state>
+        <state>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+            <column>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+                <row active="false" xcoord="0" ycoord="0"/>
+            </column>
+        </state>
+
+
+    </states>
+</shape>
