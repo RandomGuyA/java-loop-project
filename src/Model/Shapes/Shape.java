@@ -97,7 +97,6 @@ public class Shape implements IShape{
                 Element columnElement = (Element) columnNode;
                 NodeList row = columnElement.getElementsByTagName("row");
 
-
                 for (int j = 0; j < row.getLength(); j++) {
 
                     Node rowNode = row.item(j);
@@ -110,8 +109,8 @@ public class Shape implements IShape{
                             int x = Integer.parseInt(rowElement.getAttribute("xcoord"));
                             int y = Integer.parseInt(rowElement.getAttribute("ycoord"));
 
-                            //System.out.println("(" + x + "," + y + ")");
-                           // System.out.println("(" + i + "," + j + ")");
+                             //System.out.println("(" + x + "," + y + ")");
+                            // System.out.println("(" + i + "," + j + ")");
 
                             Side[] sides = tileset.getSides(x,y);
 

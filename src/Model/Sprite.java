@@ -21,4 +21,8 @@ public class Sprite {
     public BufferedImage getImage() {
         return image;
     }
+
+    public Side[] getSides() {
+        return sides;
+    }
 }

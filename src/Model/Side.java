@@ -2,22 +2,26 @@ package Model;
 
 public class Side {
 
-    private String side;
+    private String sideName;
     private Coordinates adjacent;
     private boolean isOpen;
+    private boolean isConnected;
 
-    public Side(String side, Coordinates adjacent, boolean isOpen) {
-        this.side = side;
+    public Side(String sideName, Coordinates adjacent, boolean isOpen) {
+        this.sideName = sideName;
         this.adjacent = adjacent;
         this.isOpen = isOpen;
+        isConnected=false;
     }
 
-    public String getSide() {
-        return side;
+
+
+    public String getSideName() {
+        return sideName;
     }
 
-    public void setSide(String side) {
-        this.side = side;
+    public void setSideName(String sideName) {
+        this.sideName = sideName;
     }
 
     public Coordinates getAdjacent() {
@@ -34,5 +38,13 @@ public class Side {
 
     public void setOpen(boolean open) {
         isOpen = open;
+    }
+
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    public void setConnected(boolean connected) {
+        isConnected = connected;
     }
 }

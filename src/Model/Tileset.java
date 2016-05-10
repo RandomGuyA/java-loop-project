@@ -31,10 +31,7 @@ public class Tileset {
         this.marginX = marginX;
         this.marginY = marginY;
 
-
         strSides = new String[]{"top", "right", "bottom", "left"};
-
-
 
         setupSpriteMap("data/sprites/sprite-map.xml");
         setupTileSheet(fileName);
@@ -90,25 +87,21 @@ public class Tileset {
 
     public Side[] getSides(int x, int y){
 
+        Side[] sides = new Side[4];
         BufferedImage bufferedImages = sprites[x][y];
 
         SpriteMap spriteMap = getspriteMap(x,y);
 
         String map = spriteMap.getBinaryValue();
 
-        /**
-         * this is where i left off
-         *
-         *
-         */
         for(int a=0; a<strSides.length; a++){
-            System.out.println("here "+ a);
-            int top  = Integer.parseInt(map.substring(0,1));
+            String strSide = strSides[a];
+            int top  = Integer.parseInt(map.substring(a,(a+1)));
             boolean isOpen =(top==1)?true:false;
-            getAdjacentCoords("top");
-            Side side = new Side("top",getAdjacentCoords("top"), isOpen );
+            getAdjacentCoords(strSide);
+            sides[a]= new Side(strSide,getAdjacentCoords(strSide), isOpen);
         }
-        return null;
+        return sides;
     }
 
     private Coordinates getAdjacentCoords(String side){

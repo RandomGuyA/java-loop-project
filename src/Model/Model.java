@@ -35,7 +35,7 @@ public class Model {
     }
 
     public void nextShape(){
-        currentShape = shapeFactory.getShape(shapes[randInt(0,shapes.length)], tileset);
+        currentShape = shapeFactory.getShape(shapes[randInt(0,shapes.length-1)], tileset);
     }
 
     private void populateShapeStringArray(){
