@@ -150,6 +150,16 @@ public class Grid {
 
                 Side adjside = adjacentTile.getOppositeSide(sideName);
 
+
+                /**
+                 *
+                 * need to check whether the adjacent tile is part of the shape
+                 *
+                 * maybe give it an id 1st...?
+                 */
+
+
+
                 if (adjside.isOpen()) {
 
                     adjside.setOpen(false);
@@ -310,7 +320,7 @@ public class Grid {
 
         ArrayList<Sprite> sprites = state.getSprites();
 
-        System.out.println("position check: ");
+       // System.out.println("position check: ");
 
         int count=0;
 
@@ -337,7 +347,7 @@ public class Grid {
 
         int x = calculateTilePosition(shape.getPosition().getX(), "x");
         int y = calculateTilePosition(shape.getPosition().getY(), "y");
-        System.out.println("("+x+","+y+")");
+        //System.out.println("("+x+","+y+")");
 
 
         return new Coordinates(x,y);
