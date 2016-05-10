@@ -1,0 +1,12 @@
+<?xcoordml version="1.0" encoding="UTF-8"?>
+<sprites name="sprite map">
+    <sprite x="0" y="0" binary="0110"/>
+    <sprite x="1" y="0" binary="0101"/>
+    <sprite x="2" y="0" binary="0011"/>
+    <sprite x="0" y="1" binary="1001"/>
+    <sprite x="1" y="1" binary="0000"/>
+    <sprite x="2" y="1" binary="1001"/>
+    <sprite x="0" y="2" binary="1100"/>
+    <sprite x="1" y="2" binary="0101"/>
+    <sprite x="2" y="2" binary="1001"/>
+</sprites>

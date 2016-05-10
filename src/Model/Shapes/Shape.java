@@ -113,10 +113,9 @@ public class Shape implements IShape{
                             //System.out.println("(" + x + "," + y + ")");
                            // System.out.println("(" + i + "," + j + ")");
 
+                            Side[] sides = tileset.getSides(x,y);
 
-
-
-                            sprites.add(new Sprite(tileset.getSingleSprite(x, y), new Coordinates(i-1, j-1), new Side[4]));  ///need to get side info from the tileset
+                            sprites.add(new Sprite(tileset.getSingleSprite(x, y), new Coordinates(i-1, j-1), sides));
                         }
                     }
                 }
