@@ -8,13 +8,21 @@ import java.util.ArrayList;
 public class Tile {
 
     private BufferedImage img;
-    private boolean isEmpty = true;
+    private boolean isEmpty;
     private Side[] sides;
     private Coordinates arrayPosition;
+    private int arrayId;
 
+    public Tile(BufferedImage img, boolean isEmpty, Side[] sides, Coordinates arrayPosition) {
+        this.img = img;
+        this.isEmpty = isEmpty;
+        this.sides = sides;
+        this.arrayPosition = arrayPosition;
+
+    }
 
     public Tile(){
-
+        isEmpty = true;
     }
 
     public void draw(Graphics2D g2d, int x, int y) {
@@ -26,6 +34,8 @@ public class Tile {
     public Side getOppositeSide(String sideName){
 
         String name = getOppositeName(sideName);
+
+        System.out.println("opposite Side: "+name);
 
         for(int a=0; a<sides.length; a++){
             if(sides[a].getSideName().equals(name)){
@@ -60,7 +70,7 @@ public class Tile {
 
     public int getOpenSideCount(){
 
-        ArrayList<Side> openSides= new ArrayList<>();
+        ArrayList<Side> openSides = new ArrayList<>();
 
         for(int a=0; a<sides.length; a++){
             if(sides[a].isOpen()){
@@ -72,7 +82,7 @@ public class Tile {
 
 
 
-    private String getOppositeName(String sideName){
+    public String getOppositeName(String sideName){
 
         switch(sideName){
             case "top":
@@ -119,5 +129,13 @@ public class Tile {
 
     public void setArrayPosition(Coordinates arrayPosition) {
         this.arrayPosition = arrayPosition;
+    }
+
+    public int getArrayId() {
+        return arrayId;
+    }
+
+    public void setArrayId(int arrayId) {
+        this.arrayId = arrayId;
     }
 }

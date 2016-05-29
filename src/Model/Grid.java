@@ -1,5 +1,7 @@
 package Model;
 
+import Model.Loops.Loop;
+import Model.Loops.LoopDetection;
 import Model.Shapes.Shape;
 import Model.Shapes.State;
 import java.awt.*;
@@ -13,12 +15,10 @@ public class Grid {
     private int offsetY = 96;
     private int gridWidth = 19;
     private int gridHeight = 9;
-
+    private Grid theGrid;
     private int lastLoopId;
+    private LoopDetection loopDetection;
     private ArrayList<Loop> potentialLoops;
-
-    private Tile startTile;
-    private ArrayList<Tile> evaluatedTiles;
 
     private Tile[][] tiles;
 
@@ -29,10 +29,11 @@ public class Grid {
         this.offsetY = offsetY;
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;
-
+        theGrid=this;
         lastLoopId=1;
         tiles = new Tile[gridWidth][gridHeight];
         potentialLoops = new ArrayList<>();
+        loopDetection = new LoopDetection();
         addBlankTiles();
 
     }
@@ -50,7 +51,6 @@ public class Grid {
             }
         }
     }
-
 
     private void addBlankTiles() {
 
@@ -79,232 +79,78 @@ public class Grid {
 
                 Sprite sprite = sprites.get(a);
 
-                int x = position.getX()+sprite.getCoordinates().getX();
-                int y = position.getY()+sprite.getCoordinates().getY();
+                int x = position.getX() + sprite.getCoordinates().getX();
+                int y = position.getY() + sprite.getCoordinates().getY();
 
                 //System.out.println("("+x+","+y+")");
                 Tile tile = tiles[x][y];
+
                 tile.setImg(sprite.getImage());
                 tile.setEmpty(false);
                 tile.setSides(sprite.getSides());
                 tile.setArrayPosition(new Coordinates(x,y));
-                shapeTiles.add(tile);
+
+                loopDetection.loopDetector(theGrid, tile);
+
             }
         }
-        loopDetection(shapeTiles);
-
-        //checkforLoops();
+        printLoopsOut();
     }
 
-    private void loopDetection(ArrayList<Tile> shapeTiles) {
+    private void printLoopsOut() {
 
-        //need to normalize the open ends in the array
-
-        shapeTiles = removeConnectedOpenEnds(shapeTiles);
-
-        int count=0;
-
-        for(int a=0; a<shapeTiles.size(); a++){
-            count = count + shapeTiles.get(a).getOpenSideCount();
+        for(int a=0; a<potentialLoops.size(); a++){
+            Loop loop = potentialLoops.get(a);
+            System.out.println("Loop Id: "+loop.getId());
+            System.out.println("Loop Tile Count: "+loop.getLoopTiles().size());
         }
-        System.out.println("count: "+count);
-
-        if(connectedToAnotherLoop()){
-            //add to loop
-        }else {
-
-        }
-
     }
 
-    private ArrayList<Tile> removeConnectedOpenEnds(ArrayList<Tile> shapeTiles) {
+    public void createNewLoop(Tile tile) {
+        tile.setArrayId(lastLoopId);
+        System.out.println("loop id "+ lastLoopId);
 
+        potentialLoops.add(new Loop(lastLoopId, tile));
+        lastLoopId++;
+    }
 
-        for(int a=0; a<shapeTiles.size(); a++) {
-            Tile tile = shapeTiles.get(a);
-            if(tile.hasOpenSides()) {
-                evaluatedTileOpenEnds(tile);
+    public Loop getLoopById(int id){
+
+        Loop loop = null;
+        for(int a=0; a<potentialLoops.size();a++){
+            if(potentialLoops.get(a).getId()==id){
+                loop = potentialLoops.get(a);
             }
         }
-        return shapeTiles;
+        return loop;
     }
 
-    private void evaluatedTileOpenEnds(Tile tile) {
+    public void mergeLoopArrays(int arrayId, int arrayId1) {
 
-        ArrayList<Side> openSides = tile.getAllOpenSides();
+        ArrayList<Tile> loopTiles = new ArrayList<>();
+        System.out.println("merging loops id: "+arrayId+" and id: "+arrayId1);
+        System.out.println("1st array is "+getLoopById(arrayId).getLoopTiles().size()+" long");
+        System.out.println("2nd array is "+getLoopById(arrayId1).getLoopTiles().size()+" long");
 
-        for(int b=0; b<openSides.size(); b++){
+        loopTiles = addTilesFromLoop(loopTiles, getLoopById(arrayId), lastLoopId);
+        loopTiles = addTilesFromLoop(loopTiles, getLoopById(arrayId1), lastLoopId);
 
-            Side side = openSides.get(b);
-            int x = tile.getArrayPosition().getX();
-            int y = tile.getArrayPosition().getY();
+        potentialLoops.add(new Loop(lastLoopId, loopTiles));
 
-            Coordinates adjacentTileCoords = getAdjacentCoords(side, x,y);
-            Tile adjacentTile = getAdjacentTile(adjacentTileCoords);
-
-            if (!adjacentTile.isEmpty()) {
-
-                side.setOpen(false);
-
-                String sideName = side.getSideName();
-
-                Side adjside = adjacentTile.getOppositeSide(sideName);
-
-
-                /**
-                 *
-                 * need to check whether the adjacent tile is part of the shape
-                 *
-                 * maybe give it an id 1st...?
-                 */
-
-
-
-                if (adjside.isOpen()) {
-
-                    adjside.setOpen(false);
-                    side.setConnected(true);
-                    adjside.setConnected(true);
-                }
-            }
-        }
+        lastLoopId++;
     }
 
-    private void matchOpenSides(ArrayList<Side> openSides) {
+    private ArrayList<Tile> addTilesFromLoop(ArrayList<Tile> loopTiles , Loop loop, int loopId) {
 
+        ArrayList<Tile> theTiles = loop.getLoopTiles();
 
-
-
-    }
-
-    private ArrayList<Side> getOpenSidesOnly(ArrayList<Tile> shapeTiles) {
-
-        ArrayList<Side> openSides = new ArrayList<>();
-
-        for(int a=0; a<shapeTiles.size(); a++) {
-            Tile tile = shapeTiles.get(a);
-            if(tile.hasOpenSides()){
-
-                ArrayList<Side> tempOpenSides = tile.getAllOpenSides();
-                openSides = mergeArrayBtoA(tempOpenSides, openSides);
-            }
+        for(int a=0; a<theTiles.size();a++){
+            Tile tile = theTiles.get(a);
+            tile.setArrayId(loopId);
+            loopTiles.add(theTiles.get(a));
         }
 
-        return openSides;
-    }
-
-    private ArrayList<Side> mergeArrayBtoA(ArrayList<Side> arrayA, ArrayList<Side> arrayB) {
-        for(int a=0;a<arrayB.size(); a++){
-            arrayA.add(arrayB.get(a));
-        }
-        return arrayA;
-    }
-
-    private boolean connectedToAnotherLoop() {
-
-
-
-        return false;
-    }
-
-    private void checkforLoops() {
-
-        evaluatedTiles = new ArrayList<>();
-
-        for(int a=0; a<gridWidth;a++){
-            for(int b=0; b<gridHeight;b++){
-                Tile tile = tiles[a][b];
-                if(!tile.isEmpty()) {
-                    System.out.println("found tile: ("+a+","+b+")");
-
-                    if(hasOpenSides(tile.getSides())){
-                        System.out.println("has open sides: true");
-
-                        //is tiles already in evaluated list?
-
-                        evaluateTile(tile, a, b);
-                    }
-                }
-            }
-        }
-    }
-
-    private void evaluateTile(Tile tile, int x, int y) {
-
-        startTile = tile;
-        Side side = getOpenSide(tile.getSides()); //gets 1st open side
-
-        if(side==null){
-            System.out.println("null");
-        }
-
-        //gets coords of the tile next to the open side
-        Coordinates adjacentTileCoords = getAdjacentCoords(side, x, y);
-
-        while(true) {
-
-            Tile adjacentTile = getAdjacentTile(adjacentTileCoords);
-
-            if (!adjacentTile.isEmpty()) {
-
-                side.setOpen(false);
-
-                String sideName = side.getSideName();
-
-                Side adjside = adjacentTile.getOppositeSide(sideName);
-
-                if (adjside.isOpen()) {
-
-                    adjside.setOpen(false);
-
-                    side = getOpenSide(adjacentTile.getSides());
-                    int ax = adjacentTileCoords.getX();
-                    int ay = adjacentTileCoords.getY();
-                    System.out.println("evaluating: ("+ax+","+ay+")");
-                    adjacentTileCoords = getAdjacentCoords(adjside,ax ,ay);
-                }else{
-                    break;
-                }
-            }else{
-                break;
-            }
-        }
-    }
-
-    private Coordinates getAdjacentCoords(Side side, int x, int y){
-
-
-        int dx = side.getAdjacent().getX() + x;
-        int dy = side.getAdjacent().getY() + y;
-
-        return new Coordinates(dx, dy);
-    }
-
-    private Tile getAdjacentTile(Coordinates position) {
-
-        return tiles[position.getX()][position.getY()];
-    }
-
-    private Boolean hasOpenSides(Side[] sides) {
-
-        for(int a=0;a<sides.length; a++){
-            if(sides[a].isOpen()){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Side getOpenSide(Side[] sides) {
-
-        Side side= null;
-
-        for(int a=0;a<sides.length; a++){
-            if(sides[a].isOpen()){
-                side = sides[a];
-            }
-        }
-        return side;
+        return loopTiles;
     }
 
     private boolean tileIsEmpty(Coordinates position) {
@@ -343,12 +189,30 @@ public class Grid {
         return false;
     }
 
+    public void addTileToGrid(Tile tile){
+
+        tiles[tile.getArrayPosition().getX()][tile.getArrayPosition().getY()] = tile;
+    }
+
+    public int getNumberOfActiveTiles (){
+
+        int count = 0;
+
+        for(int a=0; a<gridWidth; a++){
+            for(int b=0; b<gridHeight; b++){
+                if(!tiles[a][b].isEmpty()){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     private Coordinates calculatePositionOnGrid(Shape shape){
 
         int x = calculateTilePosition(shape.getPosition().getX(), "x");
         int y = calculateTilePosition(shape.getPosition().getY(), "y");
         //System.out.println("("+x+","+y+")");
-
 
         return new Coordinates(x,y);
     }
@@ -358,6 +222,22 @@ public class Grid {
         int offset = (axis.equals("x"))?offsetX:offsetY;
         int size = (axis.equals("x"))?tileWidth:tileHeight;
         return (pos - offset)/size;
+    }
+
+    public Tile[][] getTiles() {
+        return tiles;
+    }
+
+    public int getGridWidth() {
+        return gridWidth;
+    }
+
+    public int getGridHeight() {
+        return gridHeight;
+    }
+
+    public ArrayList<Loop> getPotentialLoops() {
+        return potentialLoops;
     }
 
 

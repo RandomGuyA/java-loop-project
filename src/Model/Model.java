@@ -26,7 +26,7 @@ public class Model {
 
         populateShapeStringArray();
         tileset = new Tileset("shapes.png", TILE_WIDTH, TILE_HEIGHT,3,3,0,0);
-        grid = new Grid(TILE_WIDTH,TILE_HEIGHT,OFFSET_X,OFFSET_Y,GRID_WIDTH,GRID_HEIGHT);
+        grid = generateGrid();
         shapeFactory = new ShapeFactory();
         BufferedImage backgroundTile = tileset.getSingleSprite(1,1);
         background = new Background(GRID_WIDTH, GRID_HEIGHT, OFFSET_X, OFFSET_Y, tileset.getTileWidth(), tileset.getTileHeight(), backgroundTile);
@@ -35,7 +35,12 @@ public class Model {
     }
 
     public void nextShape(){
-        currentShape = shapeFactory.getShape(shapes[randInt(0,shapes.length-1)], tileset);
+
+        currentShape = shapeFactory.getShape("LargeCorner"/*shapes[randInt(0,shapes.length-1)]*/, tileset);
+    }
+
+    public Grid generateGrid(){
+        return new Grid(TILE_WIDTH,TILE_HEIGHT,OFFSET_X,OFFSET_Y,GRID_WIDTH,GRID_HEIGHT);
     }
 
     private void populateShapeStringArray(){

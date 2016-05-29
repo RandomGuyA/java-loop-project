@@ -33,16 +33,16 @@ public class Tileset {
 
         strSides = new String[]{"top", "right", "bottom", "left"};
 
-        setupSpriteMap("data/sprites/sprite-map.xml");
-        setupTileSheet(fileName);
+        spriteMaps = setupSpriteMap("data/sprites/sprite-map.xml");
+        sprites = setupTileSheet(fileName);
     }
 
-    private void setupSpriteMap(String filename) {
+    public ArrayList<SpriteMap> setupSpriteMap(String filename) {
 
         Document xmlDoc = loadXMLFile(filename);
         NodeList nodeList = xmlDoc.getElementsByTagName("sprite");
 
-        spriteMaps = new ArrayList<>();
+        ArrayList<SpriteMap> tempSpriteMap = new ArrayList<SpriteMap>();
 
         for(int i=0; i<nodeList.getLength(); i++){
 
@@ -52,15 +52,21 @@ public class Tileset {
             int x = Integer.parseInt(eElement.getAttribute("x"));
             int y = Integer.parseInt(eElement.getAttribute("y"));
 
-            spriteMaps.add(new SpriteMap(eElement.getAttribute("binary"), new Coordinates(x,y)));
+            tempSpriteMap.add(new SpriteMap(eElement.getAttribute("binary"), new Coordinates(x,y)));
         }
+        return tempSpriteMap;
+
     }
 
-    private void setupTileSheet(String fileName) {
+    public BufferedImage[][] setupTileSheet(String fileName) {
+
+        BufferedImage[][] sprites = null;
+
         tileset = loadImage(fileName);
         if(tileset!=null){
             sprites = splitTilesetIntoTiles(tileset);
         }
+        return sprites;
     }
 
     private BufferedImage loadImage(String fileName){
