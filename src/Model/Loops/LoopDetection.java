@@ -15,13 +15,22 @@ import java.util.ArrayList;
 public class LoopDetection {
 
     private ArrayList<Connections> connections;
+    private Tile tile;
+    private Grid grid;
+
+    public LoopDetection(){}
+
+    public LoopDetection(Grid grid, Tile tile){
+        connections = getConnections(grid, tile);
+        this.tile=tile;
+        this.grid=grid;
+    }
 
     public void loopDetector(Grid grid, Tile tile) {
 
         connections = getConnections(grid, tile);
 
-        System.out.println("Evaluating tile: ("+tile.getArrayPosition().getX()+" , "+tile.getArrayPosition().getY()+")");
-
+        System.out.println("Evaluating tile: "+tile.toString());
         System.out.println("tile has "+tile.getOpenSideCount()+" open sides");
 
         if(hasNoAdjacentTiles(grid, tile)){
@@ -29,17 +38,17 @@ public class LoopDetection {
             grid.createNewLoop(tile);
         }else {
 
-            if(isConnectedToAnotherTile(grid, tile)){
+            if(isConnectedToAnotherTile()){
 
-                System.out.println("tile is connected to another tile");
+                int connectionTotal = calculateConnectionTotal();
 
-                int connectionTotal = calculateConnectionTotal(grid, tile);
+                System.out.println("tile is connected to "+connectionTotal+" other tiles");
 
                 if(connectionTotal==1){
 
-                    System.out.println("tile is connected to 1 other tile");
 
-                    Tile adjTile = getAdjacentConnectedTile(grid,tile);
+
+                    Tile adjTile = getAdjacentConnectedTile();
                     Loop loop = grid.getLoopById(adjTile.getArrayId());
                     loop.addTileToLoop(tile);
 
@@ -49,9 +58,9 @@ public class LoopDetection {
 
                 }else if(connectionTotal==2){
 
-                    System.out.println("tile is connected to 2 other tile");
 
-                    ArrayList<Tile> connectedTiles = getArrayOfAdjacentConnectedTiles(grid, tile);
+
+                    ArrayList<Tile> connectedTiles = getArrayOfAdjacentConnectedTiles();
 
                     int id1 = connectedTiles.get(0).getArrayId();
                     int id2 =connectedTiles.get(1).getArrayId();
@@ -76,10 +85,13 @@ public class LoopDetection {
         ArrayList<Connections> connections = new ArrayList<>();
         Tile[][] tiles = grid.getTiles();
 
-        Tile connectedTile = null;
-        Side connectedSide = null;
+        Tile connectedTile;
+        Side connectedSide;
 
         for(int a=0; a<sides.size(); a++){
+
+            connectedTile = null;
+            connectedSide = null;
 
             Side side = sides.get(a);
 
@@ -94,10 +106,8 @@ public class LoopDetection {
                 connectedTile = gridTile;
 
                 if(!gridTile.isEmpty()) {
-
                     Side adjSide = gridTile.getOppositeSide(side.getSideName());
                     connectedSide = adjSide;
-
                 }
             }
             connections.add(new Connections(tile, connectedTile,side,connectedSide));
@@ -105,8 +115,8 @@ public class LoopDetection {
         return connections;
     }
 
-
     private void countOpenEnds(Loop loop) {
+
         ArrayList<Tile> tiles =  loop.getLoopTiles();
 
         int count = 0;
@@ -114,7 +124,6 @@ public class LoopDetection {
             count = count + tiles.get(a).getOpenSideCount();
         }
         System.out.println("count "+count);
-
     }
 
     private void evaluateLoop(Grid grid, Loop loop) {
@@ -124,7 +133,7 @@ public class LoopDetection {
         for(int a=0; a<tiles.size();a++){
             Tile tile = tiles.get(a);
 
-            if(isConnectedToAnotherTile(grid, tile)){
+            if(isConnectedToAnotherTile()){
                 setConnectedOpenSides(grid, tile);
             }
         }
@@ -162,108 +171,67 @@ public class LoopDetection {
 
     }
 
-    public int calculateConnectionTotal(Grid grid, Tile tile) {
+    public int calculateConnectionTotal() {
 
-        ArrayList<Side> sides = tile.getAllOpenSides();
-        Tile[][] tiles = grid.getTiles();
+        int count =0;
 
-        int count=0;
+        for(int a=0; a<connections.size(); a++) {
 
-        for(int a=0; a<sides.size(); a++){
+            Connections con = connections.get(a);
 
-            Side side = sides.get(a);
+            System.out.println(con.toString());
 
-            Coordinates adjTile = side.getAdjacent();
+            if(con.availableConnectedSide()){
 
-            int x = tile.getArrayPosition().getX() + adjTile.getX();
-            int y = tile.getArrayPosition().getY() + adjTile.getY();
+                System.out.println(con.getConnectedSide().toString());
 
-            if(withinBounds(grid, x, y)) {
-
-                Tile gridTile = tiles[x][y];
-
-                if(!gridTile.isEmpty()) {
-
-                    Side adjSide = gridTile.getOppositeSide(side.getSideName());
-
-                    if (adjSide.isOpen()) {
-                        count++;
-                    }
+                if(con.getConnectedSide().isOpen()){
+                    count++;
                 }
+
             }
         }
         return count;
     }
 
 
-    public ArrayList<Tile> getArrayOfAdjacentConnectedTiles(Grid grid, Tile tile) {
-
-        ArrayList<Side> sides = tile.getAllOpenSides();
-        Tile[][] tiles = grid.getTiles();
+    public ArrayList<Tile> getArrayOfAdjacentConnectedTiles() {
 
         ArrayList<Tile> connectedTiles = new ArrayList<Tile>();
 
-        for(int a=0; a<sides.size(); a++){
+        for(int a=0; a<connections.size(); a++) {
 
-            Side side = sides.get(a);
+            Connections con = connections.get(a);
 
-            Coordinates adjTile = side.getAdjacent();
+            System.out.println(con.toString());
 
-            int x = tile.getArrayPosition().getX() + adjTile.getX();
-            int y = tile.getArrayPosition().getY() + adjTile.getY();
-
-            if(withinBounds(grid, x, y)) {
-
-                Tile gridTile = tiles[x][y];
-
-                if(!gridTile.isEmpty()) {
-
-                    Side adjSide = gridTile.getOppositeSide(side.getSideName());
-
-                    if (adjSide.isOpen()) {
-                        connectedTiles.add(gridTile);
-                    }
-                }
+            if(con.getConnectedSide().isOpen()){
+                connectedTiles.add(con.getConnectedTile());
             }
+
         }
         return connectedTiles;
     }
 
-    public Tile getAdjacentConnectedTile(Grid grid, Tile tile) {
+    public Tile getAdjacentConnectedTile() {
+        Tile tile = null;
 
-        ArrayList<Side> sides = tile.getAllOpenSides();
-        Tile[][] tiles = grid.getTiles();
+        System.out.println("Potential Connections: "+connections.size());
 
-        Tile aTile = null;
+        for(int a=0; a<connections.size(); a++) {
 
-        for(int a=0; a<sides.size(); a++){
+            Connections con = connections.get(a);
 
-            Side side = sides.get(a);
+            System.out.println(con.toString());
 
-            Coordinates adjTile = side.getAdjacent();
-
-            int x = tile.getArrayPosition().getX() + adjTile.getX();
-            int y = tile.getArrayPosition().getY() + adjTile.getY();
-
-            if(withinBounds(grid, x, y)) {
-
-                Tile gridTile = tiles[x][y];
-
-                if(!gridTile.isEmpty()) {
-
-                    Side adjSide = gridTile.getOppositeSide(side.getSideName());
-
-                    if (adjSide.isOpen()) {
-                        aTile = gridTile;
-                    }
-                }
+            if(con.availableConnectedSide()){
+                tile = con.getConnectedTile();
             }
         }
-        return aTile;
+        return tile;
     }
 
-
-    public boolean isConnectedToAnotherTile(Grid grid, Tile tile) {
+    public boolean isConnectedToAnotherTile() {
 
         for(int a=0; a<connections.size(); a++){
 
@@ -273,49 +241,6 @@ public class LoopDetection {
                 return con.isValidConnectionAvailable();
             }
         }
-
-
-
-        /*
-        ArrayList<Side> sides = tile.getAllOpenSides();
-        Tile[][] tiles = grid.getTiles();
-        System.out.println("tile has "+sides.size()+" open sides");
-        for(int a=0; a<sides.size(); a++){
-
-            Side side = sides.get(a);
-            System.out.println("Side Location: "+side.getSideName());
-            Coordinates adjTile = side.getAdjacent();
-
-            int x = tile.getArrayPosition().getX() + adjTile.getX();
-            int y = tile.getArrayPosition().getY() + adjTile.getY();
-
-            if(withinBounds(grid, x, y)) {
-
-                Tile gridTile = tiles[x][y];
-                System.out.println("Evaluating adjacent tile at location ("+x+" , "+y+")");
-
-                System.out.println("Tile is empty:"+ gridTile.isEmpty() );
-                if(!gridTile.isEmpty()) {
-
-                    Side adjSide = gridTile.getOppositeSide(side.getSideName());
-
-
-                    ArrayList<Side> adjSides = gridTile.getAllOpenSides();
-                    for(int b=0; b<adjSides.size();b++){
-                        System.out.println("side names: "+adjSides.get(b).getSideName());
-                    }
-
-
-                    System.out.println("adjacent tile has "+gridTile.getOpenSideCount()+" open sides");
-
-                    System.out.println("Adjacent Side of Tile is Open: "+adjSide.isOpen());
-                    if (adjSide.isOpen()) {
-
-                        return true;
-                    }
-                }
-            }
-        }*/
         return false;
     }
 

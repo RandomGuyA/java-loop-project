@@ -31,11 +31,18 @@ public class Tile {
 
     }
 
+    public String toString(){
+
+        if(this.isEmpty()){
+            return "Tile: is Empty";
+        }else{
+            return "Tile: "+arrayPosition.toString();
+        }
+    }
+
     public Side getOppositeSide(String sideName){
 
         String name = getOppositeName(sideName);
-
-        System.out.println("opposite Side: "+name);
 
         for(int a=0; a<sides.length; a++){
             if(sides[a].getSideName().equals(name)){

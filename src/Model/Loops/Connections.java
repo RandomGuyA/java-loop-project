@@ -17,6 +17,12 @@ public class Connections {
         this.connectedSide = connectedSide;
     }
 
+    public String toString(){
+
+        return "connection between "+evaluatedTile.toString()+" and "+ connectedTile.toString();
+
+    }
+
     public boolean isValidConnectionAvailable(){
 
         if(connectedSide.isOpen()){

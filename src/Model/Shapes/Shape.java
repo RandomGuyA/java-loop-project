@@ -134,12 +134,12 @@ public class Shape implements IShape{
 
         try{
             File inputFile = new File(DIRECTORY + fileName);
-            System.out.println("Loading File: "+ fileName);
+            //System.out.println("Loading File: "+ fileName);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             doc = dBuilder.parse(inputFile);
             doc.getDocumentElement().normalize();
-            System.out.println("Loaded: " + doc.getDocumentElement().getAttribute("name"));
+            //System.out.println("Loaded: " + doc.getDocumentElement().getAttribute("name"));
 
         }catch(Exception e){
             e.printStackTrace();

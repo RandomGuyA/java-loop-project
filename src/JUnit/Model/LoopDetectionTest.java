@@ -1,6 +1,8 @@
 package JUnit.Model;
 
 import Model.*;
+import Model.Grid;
+import Model.Tile;
 import Model.Loops.LoopDetection;
 import Model.Shapes.Shape;
 import Model.Shapes.ShapeFactory;
@@ -34,8 +36,8 @@ public class LoopDetectionTest {
         grid.addTileToGrid(tile1);
         Tile tile2 = createTile(4,5);
         grid.addTileToGrid(tile2);
-
-        Tile adjTile = loopDetection.getAdjacentConnectedTile(grid, tile1);
+        LoopDetection ld = new LoopDetection(grid, tile1);
+        Tile adjTile = ld.getAdjacentConnectedTile();
 
         Assert.assertEquals(4, adjTile.getArrayPosition().getX());
 
@@ -48,8 +50,8 @@ public class LoopDetectionTest {
         grid.addTileToGrid(tile1);
         Tile tile2 = createTile(4,5);
         grid.addTileToGrid(tile2);
-
-        Assert.assertEquals(1,loopDetection.calculateConnectionTotal(grid, tile2));
+        LoopDetection ld = new LoopDetection(grid, tile1);
+        Assert.assertEquals(1,ld.calculateConnectionTotal());
 
     }
     @Test
@@ -61,8 +63,8 @@ public class LoopDetectionTest {
         grid.addTileToGrid(tile2);
         Tile tile3 = createTile(3,5);
         grid.addTileToGrid(tile3);
-
-        Assert.assertEquals(2,loopDetection.calculateConnectionTotal(grid, tile2));
+        LoopDetection ld = new LoopDetection(grid, tile2);
+        Assert.assertEquals(2,ld.calculateConnectionTotal());
 
     }
 
@@ -70,10 +72,12 @@ public class LoopDetectionTest {
     @Test
     public void testIsConnectedToAnotherTile(){
 
+
         Tile tile = createTile(5,5);
         grid.addTileToGrid(tile);
         Tile testTile = createTile(6,5);
-        Assert.assertTrue(loopDetection.isConnectedToAnotherTile(grid, testTile));
+        LoopDetection ld = new LoopDetection(grid, testTile);
+        Assert.assertTrue(ld.isConnectedToAnotherTile());
 
     }
 
@@ -85,7 +89,8 @@ public class LoopDetectionTest {
         Tile tile2 = createTile(3,5);
         grid.addTileToGrid(tile2);
 
-        Assert.assertFalse(loopDetection.isConnectedToAnotherTile(grid, tile2));
+        LoopDetection ld = new LoopDetection(grid, tile2);
+        Assert.assertFalse(ld.isConnectedToAnotherTile());
 
     }
 

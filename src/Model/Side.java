@@ -14,7 +14,11 @@ public class Side {
         isConnected=false;
     }
 
+    public String toString(){
 
+        return "\nSide name: "+sideName +"\n isOpen: "+isOpen+"\n isConnected: "+isConnected;
+
+    }
 
     public String getSideName() {
         return sideName;

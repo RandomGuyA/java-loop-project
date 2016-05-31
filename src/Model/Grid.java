@@ -108,7 +108,8 @@ public class Grid {
 
     public void createNewLoop(Tile tile) {
         tile.setArrayId(lastLoopId);
-        System.out.println("loop id "+ lastLoopId);
+
+        System.out.println(tile.toString()+" added to array loop id: "+ lastLoopId+"\n");
 
         potentialLoops.add(new Loop(lastLoopId, tile));
         lastLoopId++;
